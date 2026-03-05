@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.vladsch.flexmark</groupId>
-        <artifactId>flexmark-java</artifactId>
-        <version>0.65.2-SNAPSHOT</version>
+        <groupId>com.advantest.flexmark</groupId>
+		<artifactId>flexmark-extensions</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>flexmark-ext-math</artifactId>
@@ -14,6 +14,7 @@
     </description>
 
     <dependencies>
+	
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-util</artifactId>
@@ -22,6 +23,11 @@
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark</artifactId>
         </dependency>
+		<dependency>
+            <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-util-data</artifactId>
+        </dependency>
+		
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-test-util</artifactId>
@@ -32,17 +38,6 @@
             <artifactId>flexmark-core-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark-util-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.2.0-jre</version>
-        </dependency>
-        -->
+		
     </dependencies>
 </project>
