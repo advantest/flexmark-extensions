@@ -13,6 +13,9 @@ on:
     branches-ignore:
     - main
   pull_request:
+    branches:
+    - develop
+  workflow_dispatch:
 
 jobs:
   build:
@@ -60,5 +63,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn -B clean -Pdeploy-github -DskipTests deploy
-
-    
