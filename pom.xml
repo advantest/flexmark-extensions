@@ -15,21 +15,28 @@
     <url>https://github.com/advantest/flexmark-extensions</url>
 
     <modules>
-		<module>flexmark-ext-plantuml</module>
-		<module>flexmark-ext-math</module>
+        <module>flexmark-ext-plantuml</module>
+        <module>flexmark-ext-math</module>
         <module>flexmark-ext-figures</module>
         <module>flexmark-ext-jira-ticket-links</module>
     </modules>
 
     <properties>
-		<flexmark.version>0.65.2-SNAPSHOT</flexmark.version>
+        <flexmark.version>0.65.2-SNAPSHOT</flexmark.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>1761840227</project.build.outputTimestamp>
         <flexmark.javadoc.location>${project.basedir}/target/apidocs/</flexmark.javadoc.location>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>github-packages-flexmark</id>
+            <url>https://maven.pkg.github.com/advantest/flexmark-java</url>
+        </repository>
+    </repositories>
+
     <build>
-    
+
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -55,7 +62,7 @@
             </executions>
           </plugin>
         </plugins>
-    
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -81,11 +88,11 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-		
+
     </build>
 
     <profiles>
-	
+
         <profile>
             <id>deploy-advantest</id>
             <build>
@@ -164,12 +171,12 @@
                 </plugins>
             </build>
         </profile>
-		
+
     </profiles>
 
     <dependencyManagement>
         <dependencies>
-		
+
             <!-- For dependencies between modules -->
             <dependency>
                 <groupId>com.vladsch.flexmark</groupId>
@@ -456,8 +463,8 @@
                 <artifactId>flexmark-all</artifactId>
                 <version>${flexmark.version}</version>
             </dependency>
-			
-			<!-- Our own flexmark extensions -->
+
+            <!-- Our own flexmark extensions -->
             <dependency>
                 <groupId>com.advantest.flexmark</groupId>
                 <artifactId>flexmark-ext-plantuml</artifactId>
@@ -495,7 +502,7 @@
                 <artifactId>jmh-generator-annprocess</artifactId>
                 <version>1.13</version>
             </dependency>
-			
+
         </dependencies>
     </dependencyManagement>
 
@@ -520,5 +527,5 @@
         <developerConnection>scm:git:git@github.com:advantest/flexmark-extensions.git</developerConnection>
         <url>https://github.com/advantest/flexmark-extensions</url>
     </scm>
-	
+
 </project>
