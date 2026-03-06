@@ -6,7 +6,6 @@
  */
 package com.vladsch.flexmark.ext.math.internal;
 
-import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ext.math.MathFormulaInLineNode;
 import com.vladsch.flexmark.parser.InlineParser;
 import com.vladsch.flexmark.parser.core.delimiter.Delimiter;
