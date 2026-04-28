@@ -61,7 +61,7 @@ jobs:
       if: github.ref_name == 'develop'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn -B clean -Pdeploy-github -DskipTests deploy -s $HOME/.m2/settings.xml
+      run: mvn -B -Pdeploy-github -DskipTests deploy -s $HOME/.m2/settings.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
