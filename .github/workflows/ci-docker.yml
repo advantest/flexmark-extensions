@@ -27,7 +27,7 @@ jobs:
     container:
       # Use pre-built Docker image from https://github.com/advantest/fluentmark/blob/develop/.github/workflows/build-docker-img-for-plantuml.yml
       # The image provides Graphviz, Pandoc, JDK, Maven in the required versions
-      image: ghcr.io/${{ github.repository }}:graphviz-11.0.0
+      image: ghcr.io/advantest/fluentmark:graphviz-11.0.0
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
