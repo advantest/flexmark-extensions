@@ -55,7 +55,7 @@ jobs:
         </settings>
 
     - name: Build with Maven
-      run: mvn -B clean verify --file pom.xml -U -s $HOME/.m2/settings.xml
+      run: mvn -B clean verify -U -s $HOME/.m2/settings.xml
 
     - name: Deploy to GitHub Maven Packages
       if: github.ref_name == 'develop'
