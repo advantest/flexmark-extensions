@@ -9,12 +9,12 @@
 name: Java CI with Maven
 
 on:
-  push:
-    branches-ignore:
-    - main
-  pull_request:
-    branches:
-    - develop
+  #push:
+  #  branches-ignore:
+  #  - main
+  #pull_request:
+  #  branches:
+  #  - develop
   workflow_dispatch:
 
 jobs:
