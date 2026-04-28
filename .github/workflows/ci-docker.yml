@@ -50,8 +50,7 @@ jobs:
         </settings>
 
     - name: Build with Maven
-      run: mvn -B clean verify --file pom.xml -U
-
+      run: mvn -B clean verify --file pom.xml -U -s $HOME/.m2/settings.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
@@ -93,4 +92,4 @@ jobs:
       - name: Deploy to GitHub Maven Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B clean -Pdeploy-github -DskipTests deploy
+        run: mvn -B clean -Pdeploy-github -DskipTests deploy -s $HOME/.m2/settings.xml
