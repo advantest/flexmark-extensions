@@ -231,7 +231,7 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
         try {
             File tmpFile = File.createTempFile(plantUmlSourceFile.getName(), "-svg");
             File targetDir = tmpFile.getParentFile();
-            reader = new SourceFileReader(Defines.createWithFileName(plantUmlSourceFile),
+            reader = new SourceFileReader(true, Defines.createWithFileName(plantUmlSourceFile),
                     plantUmlSourceFile, targetDir, Collections.<String>emptyList(), "UTF-8", new FileFormatOption(FileFormat.SVG));
             //reader.setCheckMetadata(true);
             List<GeneratedImage> list = reader.getGeneratedImages();
