@@ -76,7 +76,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
     public void renderPlantUmlCode(String plantUmlSourceCode, String caption, HtmlWriter htmlWriter, NodeRendererContext context) {
         htmlWriter.withAttr().tagLine("figure").indent();
         String plantUmlToSvgResult = translatePlantUmlToSvg(plantUmlSourceCode);
-        String plantUmlToHtmlResult = adaptSvgAttributesForHtmlEmbedding(plantUmlToSvgResult);
+        String svgCodeBlock = extractSvgCodeBlock(plantUmlToSvgResult);
+        String plantUmlToHtmlResult = adaptSvgAttributesForHtmlEmbedding(svgCodeBlock);
         String htmlFormatted = formatHtml(plantUmlToHtmlResult, context);
         htmlWriter.noTrimLeading().append(htmlFormatted);
         if (caption != null && !caption.isBlank()) {
@@ -93,7 +94,17 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
         htmlWriter.tag("/span").line();
     }
     
-    private String adaptSvgAttributesForHtmlEmbedding(String svgCode) {
+    String extractSvgCodeBlock(String plantumlToSvgRenderingResult) {
+        int startIndex = plantumlToSvgRenderingResult.indexOf("<svg");
+        int endIndex = plantumlToSvgRenderingResult.indexOf("</svg>");
+        
+        if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+            return plantumlToSvgRenderingResult.substring(startIndex, endIndex + "</svg>".length());
+        }
+        return plantumlToSvgRenderingResult;
+    }
+    
+    String adaptSvgAttributesForHtmlEmbedding(String svgCode) {
     	List<MatchResult> matches = SVG_TAG_PATTERN.matcher(svgCode).results().toList();
 		
     	if (matches.isEmpty()) {
@@ -189,7 +200,7 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
     	return String.join(SequenceUtils.EOL, linesArray);
     }
 
-    private String translatePlantUmlToSvg(String plantUmlSourceCode) {
+    String translatePlantUmlToSvg(String plantUmlSourceCode) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             SourceStringReader reader = new SourceStringReader(plantUmlSourceCode);
             reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
