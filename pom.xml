@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <flexmark.version>0.65.2-SNAPSHOT</flexmark.version>
+        <flexmark.version>0.65.2-20260519-1651</flexmark.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>1761840227</project.build.outputTimestamp>
         <flexmark.javadoc.location>${project.basedir}/target/apidocs/</flexmark.javadoc.location>
