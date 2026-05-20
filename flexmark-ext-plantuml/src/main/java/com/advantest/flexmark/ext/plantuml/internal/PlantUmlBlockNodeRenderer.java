@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
@@ -204,7 +205,7 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             SourceStringReader reader = new SourceStringReader(plantUmlSourceCode);
             reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
-            return new String(os.toByteArray(), Charset.forName("UTF-8"));
+            return new String(os.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
             return "Could not render SVG from PlantUML source code.";
@@ -251,7 +252,7 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
                 GeneratedImage img = list.get(0);
                 File targetFile = img.getPngFile();
 
-                return Files.readString(targetFile.toPath(), Charset.forName("UTF-8"));
+                return Files.readString(targetFile.toPath(), StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
             e.printStackTrace();
