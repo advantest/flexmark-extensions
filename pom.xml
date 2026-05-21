@@ -6,7 +6,7 @@
 
     <groupId>com.advantest.flexmark</groupId>
     <artifactId>flexmark-extensions</artifactId>
-    <version>1.0.0-20260521-0957</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>flexmark-extensions</name>
     <description>
         flexmark-java extensions for PlantUML and some Advantest-specific parsing and rendering customizations for FluentMark Advantest Edition.
@@ -24,7 +24,7 @@
     <properties>
         <flexmark.version>0.65.2-20260519-1651</flexmark.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>1779350348</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1779350678</project.build.outputTimestamp>
         <flexmark.javadoc.location>${project.basedir}/target/apidocs/</flexmark.javadoc.location>
     </properties>
 
