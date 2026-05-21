@@ -7,31 +7,28 @@
 		<version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>flexmark-ext-figures</artifactId>
-    <name>flexmark-java extension for rendering images as figures</name>
-    <description>flexmark-java extension for rendering images to HTML within figure tags and with figcaption tags.</description>
+    <artifactId>flexmark-ext-jira-ticket-links</artifactId>
+    <name>flexmark-java extension for parsing Jira ticket numbers and rendering links.</name>
+    <description>flexmark-java extension for parsing Jira ticket numbers and rendering links to Jira tickets, e.g. translating HMR-157 to a link.
+                 Intended to be configured for your Jira instance, i.e. setting the base Jira URL.
+    </description>
 
     <dependencies>
 	
-        <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark-util</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark</artifactId>
         </dependency>
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
+            <artifactId>flexmark-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-util-data</artifactId>
         </dependency>
-		<dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>33.2.0-jre</version>
-        </dependency>
 		
-		<dependency>
+        <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-test-util</artifactId>
             <scope>test</scope>
