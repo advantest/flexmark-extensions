@@ -35,14 +35,14 @@ public class MathFormulaInLineDelimiterProcessor implements DelimiterProcessor {
     public boolean canBeOpener(String before, String after, boolean leftFlanking, boolean rightFlanking,
             boolean beforeIsPunctuation, boolean afterIsPunctuation, boolean beforeIsWhitespace,
             boolean afterIsWhiteSpace) {
-        return leftFlanking && beforeIsWhitespace;
+        return leftFlanking && (beforeIsWhitespace || beforeIsPunctuation);
     }
 
     @Override
     public boolean canBeCloser(String before, String after, boolean leftFlanking, boolean rightFlanking,
             boolean beforeIsPunctuation, boolean afterIsPunctuation, boolean beforeIsWhitespace,
             boolean afterIsWhiteSpace) {
-        return rightFlanking && afterIsWhiteSpace;
+        return rightFlanking && (afterIsWhiteSpace || afterIsPunctuation);
     }
 
     @Override
