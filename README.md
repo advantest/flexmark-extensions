@@ -22,3 +22,6 @@ Extensions
 * flexmark-ext-jira-ticket-links
 	* Extension for rendering Jira ticket numbers as links to that Jira tickets.
 	  Allows for customizing the Jira URL and for customizing the Jira project key constraints using a regular expression.
+* flexmark-ext-sourcetracking
+	* Extension adding the Markdown source code position (attributes `source-offset` and `source-length`) to the rendered HTML elements.
+	  Enables navigation from Markdown source code to the corresponding element in an HTML preview and vice versa.

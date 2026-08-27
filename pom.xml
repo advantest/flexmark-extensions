@@ -19,6 +19,7 @@
         <module>flexmark-ext-math</module>
         <module>flexmark-ext-figures</module>
         <module>flexmark-ext-jira-ticket-links</module>
+        <module>flexmark-ext-sourcetracking</module>
     </modules>
 
     <properties>
