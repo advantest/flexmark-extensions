@@ -24,6 +24,7 @@
 
     <properties>
         <flexmark.version>0.65.2-20260519-1651</flexmark.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>1779350678</project.build.outputTimestamp>
         <flexmark.javadoc.location>${project.basedir}/target/apidocs/</flexmark.javadoc.location>
@@ -470,11 +471,32 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!--
+                The logging API alone, never a binding. A library that picks where its lines go
+                decides that for the program embedding it, and that is not these extensions'
+                decision to make. Whoever composes them puts a binding on the class path; without
+                one the lines are dropped and nothing else changes.
+            -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
             <!-- Common test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.13.2</version>
+            </dependency>
+            <!--
+                A binding for the tests alone, so that a line written here can be seen to really
+                arrive at a sink instead of being believed to.
+            -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.openjdk.jmh</groupId>
