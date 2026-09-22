@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.advantest.flexmark.ext.plantuml.PlantUmlExtension;
 import com.advantest.flexmark.ext.plantuml.PlantUmlImage;
@@ -27,6 +29,8 @@ import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
 
 public class PlantUmlImageNodeRenderer implements NodeRenderer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PlantUmlImageNodeRenderer.class);
 
     private PlantUmlBlockNodeRenderer plantUmlRenderer = new PlantUmlBlockNodeRenderer();
     
@@ -59,8 +63,8 @@ public class PlantUmlImageNodeRenderer implements NodeRenderer {
 
                 pumlFileContents = Files.readString(targetPath, StandardCharsets.UTF_8);
             } catch (Exception e) {
-                // TODO handle this exception properly --> logging
-                e.printStackTrace();
+                LOG.debug("The PlantUML file \"{}\" cannot be read, so the message saying so is"
+                        + " rendered in place of the diagram.", targetUrl, e);
 
                 plantUmlRenderer.renderErrorMessage(String.format(
                         "Could not read PlantUML file \"%s\"", targetUrl), context, htmlWriter);

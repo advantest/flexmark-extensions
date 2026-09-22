@@ -33,6 +33,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.advantest.flexmark.ext.plantuml.PlantUmlBlockNode;
 import com.google.common.html.HtmlEscapers;
@@ -53,6 +55,8 @@ import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.preproc.Defines;
 
 public class PlantUmlBlockNodeRenderer implements NodeRenderer {
+
+	private static final Logger LOG = LoggerFactory.getLogger(PlantUmlBlockNodeRenderer.class);
 	
 	private static final String REGEX_SVG_TAG = "<svg\\s.*?>";
 	private static final String REGEX_ATTR_VALUE = "(?<attribute>\\S+)=\\\"(?<value>.*?)\\\"";
@@ -207,7 +211,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
             reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
             return new String(os.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.debug("A PlantUML diagram cannot be rendered, so the message saying so is rendered"
+                    + " in its place.", e);
             return "Could not render SVG from PlantUML source code.";
         }
     }
@@ -233,7 +238,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
             String formatted = xmlOutput.getWriter().toString();
             return unifyLineEndings(formatted);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.debug("The rendered HTML cannot be indented, so it is written as it was produced."
+                    + " What a reader sees is the same, only harder to read in the source.", e);
             return sourceHtmlCode;
         }
     }
@@ -255,7 +261,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
                 return Files.readString(targetFile.toPath(), StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.debug("The PlantUML file {} cannot be rendered, so the message saying so is rendered"
+                    + " in its place.", plantUmlSourceFile, e);
         }
         return "Could not render HTML from PlantUML source code.";
     }
