@@ -151,7 +151,7 @@ public class MathFormulaBlockParser extends AbstractBlockParser {
             BasedSequence[] remainingLines = parentSequence.subSequence(state.getLine().getEndOffset()).splitEOL();
             for (BasedSequence currentLine : remainingLines) {
                 int indexOfEndMarker = currentLine.indexOf("$$");
-                if (indexOfEndMarker > 0) {
+                if (indexOfEndMarker >= 0) {
                     blockData.endOffset = currentLine.getStartOffset() + indexOfEndMarker + 2;
                     blockData.endMarker = currentLine.subSequence(indexOfEndMarker, indexOfEndMarker + 2);
                     return BlockStart.of(new MathFormulaBlockParser(blockData))
