@@ -440,6 +440,63 @@ Document[0, 164]
 ````````````````````````````````
 
 
+A closing delimiter at the start of its own line ends the formula
+
+```````````````````````````````` example Display Mode Formula: 3
+$$
+x^2
+$$
+.
+<p>
+  <span class="math display">\[
+  x^2
+  \]</span>
+</p>
+.
+Document[0, 9]
+  MathFormulaDisplayModeNode[0, 9]
+    Text[2, 7] chars:[2, 7, "\nx^2\n"]
+````````````````````````````````
+
+
+A formula beginning on the opening line and closed on its own line
+
+```````````````````````````````` example Display Mode Formula: 4
+$$x^2
+y^2
+$$
+.
+<p>
+  <span class="math display">\[x^2
+  y^2
+  \]</span>
+</p>
+.
+Document[0, 12]
+  MathFormulaDisplayModeNode[0, 12]
+    Text[2, 10] chars:[2, 10, "x^2\ny^2\n"]
+````````````````````````````````
+
+
+A formula closed on its own line keeps its content as text, so a link in it stays a formula
+
+```````````````````````````````` example Display Mode Formula: 5
+$$
+[a](b.md)
+$$
+.
+<p>
+  <span class="math display">\[
+  [a](b.md)
+  \]</span>
+</p>
+.
+Document[0, 15]
+  MathFormulaDisplayModeNode[0, 15]
+    Text[2, 13] chars:[2, 13, "\n[a]( … .md)\n"]
+````````````````````````````````
+
+
 ---
 
 ## Mixed
