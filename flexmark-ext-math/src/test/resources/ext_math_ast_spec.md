@@ -497,6 +497,76 @@ Document[0, 15]
 ````````````````````````````````
 
 
+A closing delimiter preceded by a space on the content line
+
+```````````````````````````````` example Display Mode Formula: 6
+$$
+x^2 $$
+.
+<p>
+  <span class="math display">\[
+  x^2 \]</span>
+</p>
+.
+Document[0, 9]
+  MathFormulaDisplayModeNode[0, 9]
+    Text[2, 7] chars:[2, 7, "\nx^2 "]
+````````````````````````````````
+
+
+A closing delimiter on its own line, preceded by spaces
+
+```````````````````````````````` example Display Mode Formula: 7
+$$
+x^2
+   $$
+.
+<p>
+  <span class="math display">\[
+  x^2
+  \]</span>
+</p>
+.
+Document[0, 12]
+  MathFormulaDisplayModeNode[0, 12]
+    Text[2, 10] chars:[2, 10, "\nx^2\n   "]
+````````````````````````````````
+
+
+A closing delimiter on its own line, preceded by a tab
+
+```````````````````````````````` example Display Mode Formula: 8
+$$
+x^2
+	$$
+.
+<p>
+  <span class="math display">\[
+  x^2
+  	\]</span>
+</p>
+.
+Document[0, 10]
+  MathFormulaDisplayModeNode[0, 10]
+    Text[2, 8] chars:[2, 8, "\nx^2\n\t"]
+````````````````````````````````
+
+
+Both delimiters on one line, separated from the formula by spaces
+
+```````````````````````````````` example Display Mode Formula: 9
+$$ x^2 $$
+.
+<p>
+  <span class="math display">\[ x^2 \]</span>
+</p>
+.
+Document[0, 9]
+  MathFormulaDisplayModeNode[0, 9]
+    Text[2, 7] chars:[2, 7, " x^2 "]
+````````````````````````````````
+
+
 ---
 
 ## Mixed
