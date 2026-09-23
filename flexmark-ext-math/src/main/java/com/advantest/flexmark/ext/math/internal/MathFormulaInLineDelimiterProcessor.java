@@ -7,6 +7,7 @@
 package com.advantest.flexmark.ext.math.internal;
 
 import com.advantest.flexmark.ext.math.MathFormulaInLineNode;
+import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.parser.InlineParser;
 import com.vladsch.flexmark.parser.core.delimiter.Delimiter;
 import com.vladsch.flexmark.parser.delimiter.DelimiterProcessor;
@@ -70,6 +71,11 @@ public class MathFormulaInLineDelimiterProcessor implements DelimiterProcessor {
         MathFormulaInLineNode formula = new MathFormulaInLineNode(
                 opener.getTailChars(delimitersUsed), text, closer.getLeadChars(delimitersUsed));
         opener.moveNodesBetweenDelimitersTo(formula, closer);
+
+        // A formula is not Markdown, so whatever the inline parser made of its content is dropped
+        // and the content is kept as text, the way the display mode form keeps it.
+        formula.removeChildren();
+        formula.appendChild(new Text(text));
     }
     
 }
