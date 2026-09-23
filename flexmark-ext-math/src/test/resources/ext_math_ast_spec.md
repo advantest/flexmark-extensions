@@ -389,6 +389,54 @@ Document[0, 34]
 ````````````````````````````````
 
 
+A link written in a formula is part of the formula, not a link
+
+```````````````````````````````` example In-line Formula: 22
+text $[a](b.md)$ text
+.
+<p>text 
+  <span class="math inline">\([a](b.md)\)</span>
+text</p>
+.
+Document[0, 21]
+  Paragraph[0, 21]
+    Text[0, 5] chars:[0, 5, "text "]
+    MathFormulaInLineNode[5, 16] textOpen:[5, 6, "$"] text:[6, 15, "[a](b.md)"] textClose:[15, 16, "$"]
+      Text[6, 15] chars:[6, 15, "[a](b.md)"]
+    Text[16, 21] chars:[16, 21, " text"]
+````````````````````````````````
+
+Two subscripts are not an emphasis
+
+```````````````````````````````` example In-line Formula: 23
+$a_1 + b_1$
+.
+<p>
+  <span class="math inline">\(a_1 + b_1\)</span>
+</p>
+.
+Document[0, 11]
+  Paragraph[0, 11]
+    MathFormulaInLineNode[0, 11] textOpen:[0, 1, "$"] text:[1, 10, "a_1 + b_1"] textClose:[10, 11, "$"]
+      Text[1, 10] chars:[1, 10, "a_1 + b_1"]
+````````````````````````````````
+
+Backticks in a formula are part of the formula, not a code span
+
+```````````````````````````````` example In-line Formula: 24
+$`x`$
+.
+<p>
+  <span class="math inline">\(`x`\)</span>
+</p>
+.
+Document[0, 5]
+  Paragraph[0, 5]
+    MathFormulaInLineNode[0, 5] textOpen:[0, 1, "$"] text:[1, 4, "`x`"] textClose:[4, 5, "$"]
+      Text[1, 4] chars:[1, 4, "`x`"]
+````````````````````````````````
+
+
 ---
 
 ## Display Mode Formula
