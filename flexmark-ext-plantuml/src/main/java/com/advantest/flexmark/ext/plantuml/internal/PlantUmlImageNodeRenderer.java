@@ -6,10 +6,6 @@
  */
 package com.advantest.flexmark.ext.plantuml.internal;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -51,25 +47,14 @@ public class PlantUmlImageNodeRenderer implements NodeRenderer {
         }
 
         if (pumlFileContents == null) {
-            try {
-                String currentMdFilePath = PlantUmlExtension.KEY_DOCUMENT_FILE_PATH.get(context.getDocument());
-                Path targetPath = new File(currentMdFilePath).toPath().getParent().resolve(Path.of(targetUrl));
+            // Whoever parses a document says what the PlantUML code of a referenced diagram is,
+            // so nothing is read here and a reference nobody answered renders as a message.
+            LOG.debug("No PlantUML code was handed over for \"{}\", so the message saying so is"
+                    + " rendered in place of the diagram.", targetUrl);
 
-                if (!targetPath.toFile().exists()) {
-                    plantUmlRenderer.renderErrorMessage(String.format(
-                            "PlantUML file \"%s\" (resolved path: \"%s\") does not exist.", targetUrl, targetPath), context, htmlWriter);
-                    return;
-                }
-
-                pumlFileContents = Files.readString(targetPath, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                LOG.debug("The PlantUML file \"{}\" cannot be read, so the message saying so is"
-                        + " rendered in place of the diagram.", targetUrl, e);
-
-                plantUmlRenderer.renderErrorMessage(String.format(
-                        "Could not read PlantUML file \"%s\"", targetUrl), context, htmlWriter);
-                return;
-            }
+            plantUmlRenderer.renderErrorMessage(String.format(
+                    "No PlantUML code available for \"%s\".", targetUrl), context, htmlWriter);
+            return;
         }
 
         plantUmlRenderer.renderPlantUmlCode(pumlFileContents, node.getText() != null ? node.getText().toString() : null, htmlWriter, context);

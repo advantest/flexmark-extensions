@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,11 +41,9 @@ public class PlantUmlImageTest extends AbstractPlantUmlTest {
 
 	@Test
 	public void referencedPumlFilesRenderedToSvg() throws IOException {
-		URL resource = this.getClass().getResource("/images.md");
 		String mdFileContent = readFileFromClasspath("/images.md");
 
 		Document document = parser.parse(mdFileContent);
-		document.set(PlantUmlExtension.KEY_DOCUMENT_FILE_PATH, resource.getPath());
 		Map<String, String> referencedFileContents = new HashMap<>();
 		referencedFileContents.put("diagrams/classes.puml", readFileFromClasspath("/diagrams/classes.puml"));
 		document.set(PlantUmlExtension.KEY_DOCUMENT_PATH_TO_FILE_CONTENTS_MAP, referencedFileContents);
@@ -58,20 +55,30 @@ public class PlantUmlImageTest extends AbstractPlantUmlTest {
 	}
 
 	@Test
-	public void renderErrorMessageForMissingPumlFile() {
-		URL resource = this.getClass().getResource("/images.md");
+	public void renderErrorMessageForPumlFileNobodyHandedOver() {
 		String mdFileContent = "![label](path/to/missing/file.puml)";
 
 		Document document = parser.parse(mdFileContent);
-		document.set(PlantUmlExtension.KEY_DOCUMENT_FILE_PATH, resource.getPath());
 
 		String resultHtml = renderer.render(document);
 
 		assertNotNull(resultHtml);
-		String expectedPrefix = "<span style=\"color:red\">PlantUML file";
-		String expectedSuffix = "does not exist.</span>\n";
-		assertEquals(expectedPrefix, resultHtml.substring(0, expectedPrefix.length()));
-		assertEquals(expectedSuffix, resultHtml.substring(resultHtml.length() - expectedSuffix.length()));
+		assertEquals("<span style=\"color:red\">No PlantUML code available for"
+				+ " &quot;path/to/missing/file.puml&quot;.</span>\n", resultHtml);
+	}
+
+	@Test
+	public void renderErrorMessageForPumlFileMissingInTheMapOfContents() {
+		String mdFileContent = "![label](path/to/missing/file.puml)";
+
+		Document document = parser.parse(mdFileContent);
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PATH_TO_FILE_CONTENTS_MAP, new HashMap<>());
+
+		String resultHtml = renderer.render(document);
+
+		assertNotNull(resultHtml);
+		assertEquals("<span style=\"color:red\">No PlantUML code available for"
+				+ " &quot;path/to/missing/file.puml&quot;.</span>\n", resultHtml);
 	}
 
 	private static final String PUML_CODE = "@startuml\nclass ArrayList\n@enduml\n";
