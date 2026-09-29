@@ -176,6 +176,51 @@ public class PlantUmlImageTest extends AbstractPlantUmlTest {
 		assertEquals(0, image.getText().length());
 	}
 
+	@Test
+	public void renderErrorMessageSayingWherePumlFileWasLookedFor() {
+		String mdFileContent = "![label](path/to/missing/file.puml)";
+
+		Document document = parser.parse(mdFileContent);
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS,
+				target -> new PlantUmlFileLocation("/home/reader/docs/" + target, false));
+
+		String resultHtml = renderer.render(document);
+
+		assertNotNull(resultHtml);
+		assertEquals("<span style=\"color:red\">PlantUML file &quot;path/to/missing/file.puml&quot;"
+				+ " (resolved path: &quot;/home/reader/docs/path/to/missing/file.puml&quot;) does"
+				+ " not exist.</span>\n", resultHtml);
+	}
+
+	@Test
+	public void renderErrorMessageForPumlFileThatIsThereButWasNotRead() {
+		String mdFileContent = "![label](path/to/unreadable/file.puml)";
+
+		Document document = parser.parse(mdFileContent);
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS,
+				target -> new PlantUmlFileLocation("/home/reader/docs/" + target, true));
+
+		String resultHtml = renderer.render(document);
+
+		assertNotNull(resultHtml);
+		assertEquals("<span style=\"color:red\">Could not read PlantUML file"
+				+ " &quot;path/to/unreadable/file.puml&quot;</span>\n", resultHtml);
+	}
+
+	@Test
+	public void renderErrorMessageWhereNobodySaysWherePumlFileWasLookedFor() {
+		String mdFileContent = "![label](path/to/missing/file.puml)";
+
+		Document document = parser.parse(mdFileContent);
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS, target -> null);
+
+		String resultHtml = renderer.render(document);
+
+		assertNotNull(resultHtml);
+		assertEquals("<span style=\"color:red\">No PlantUML code available for"
+				+ " &quot;path/to/missing/file.puml&quot;.</span>\n", resultHtml);
+	}
+
 	private PlantUmlImage findPlantUmlImage(Document document) {
 		return (PlantUmlImage) findImage(document, true);
 	}

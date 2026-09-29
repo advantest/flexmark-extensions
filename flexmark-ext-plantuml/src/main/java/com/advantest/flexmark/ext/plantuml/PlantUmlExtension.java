@@ -23,6 +23,14 @@ import java.util.Map;
 public class PlantUmlExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension {
 
     public static final NullableDataKey<Map<String,String>> KEY_DOCUMENT_PATH_TO_FILE_CONTENTS_MAP = new NullableDataKey<>("RELATIVE_PATH_TO_FILE_CONTENTS_MAP");
+
+    /**
+     * Where the PlantUML files a document refers to were looked for, asked about a reference that
+     * produced no code. A document that does not carry this is rendered as before, only without
+     * the place in the message saying that a diagram is missing.
+     */
+    public static final NullableDataKey<PlantUmlFileLocations> KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS = new NullableDataKey<>("PLANTUML_FILE_LOCATIONS");
+
     public static final NullableDataKey<Boolean> KEY_RENDER_FENCED_PLANTUML_CODE_BLOCKS = new NullableDataKey<Boolean>("RENDER_FENCED_PLANUML_CODE_BLOCKS", false);
 
     private PlantUmlExtension() {

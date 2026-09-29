@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.advantest.flexmark.ext.plantuml.PlantUmlExtension;
+import com.advantest.flexmark.ext.plantuml.PlantUmlFileLocation;
+import com.advantest.flexmark.ext.plantuml.PlantUmlFileLocations;
 import com.advantest.flexmark.ext.plantuml.PlantUmlImage;
 import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
@@ -47,17 +49,40 @@ public class PlantUmlImageNodeRenderer implements NodeRenderer {
         }
 
         if (pumlFileContents == null) {
-            // Whoever parses a document says what the PlantUML code of a referenced diagram is,
-            // so nothing is read here and a reference nobody answered renders as a message.
-            LOG.debug("No PlantUML code was handed over for \"{}\", so the message saying so is"
-                    + " rendered in place of the diagram.", targetUrl);
-
-            plantUmlRenderer.renderErrorMessage(String.format(
-                    "No PlantUML code available for \"%s\".", targetUrl), context, htmlWriter);
+            renderMissingPlantUmlCode(targetUrl, context, htmlWriter);
             return;
         }
 
         plantUmlRenderer.renderPlantUmlCode(pumlFileContents, node.getText() != null ? node.getText().toString() : null, htmlWriter, context);
+    }
+
+    /**
+     * Renders, in place of a diagram, what kept it from being rendered.
+     *
+     * <p>Whoever parses a document says what the PlantUML code of a referenced diagram is, so
+     * nothing is read here. That side also says where it looked for the file, and a reader is told
+     * that place so that the reference can be checked: a file that is not there and one that is
+     * there but cannot be read are two different things to go looking for.</p>
+     */
+    private void renderMissingPlantUmlCode(String targetUrl, NodeRendererContext context, HtmlWriter htmlWriter) {
+        PlantUmlFileLocations fileLocations = PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS.get(context.getDocument());
+        PlantUmlFileLocation location = targetUrl == null || fileLocations == null
+                ? null : fileLocations.locationOf(targetUrl);
+
+        String message;
+        if (location == null) {
+            message = String.format("No PlantUML code available for \"%s\".", targetUrl);
+        } else if (location.exists()) {
+            message = String.format("Could not read PlantUML file \"%s\"", targetUrl);
+        } else {
+            message = String.format("PlantUML file \"%s\" (resolved path: \"%s\") does not exist.",
+                    targetUrl, location.resolvedPath());
+        }
+
+        LOG.debug("No PlantUML code was handed over for \"{}\", so \"{}\" is rendered in place of"
+                + " the diagram.", targetUrl, message);
+
+        plantUmlRenderer.renderErrorMessage(message, context, htmlWriter);
     }
 
     public static class Factory implements NodeRendererFactory {
