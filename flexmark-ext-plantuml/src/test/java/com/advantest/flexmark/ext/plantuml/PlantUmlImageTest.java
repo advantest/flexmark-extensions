@@ -193,6 +193,21 @@ public class PlantUmlImageTest extends AbstractPlantUmlTest {
 	}
 
 	@Test
+	public void renderErrorMessageWithoutThePlaceWhereItIsTheReferenceItself() {
+		String mdFileContent = "![label](path/to/missing/file.puml)";
+
+		Document document = parser.parse(mdFileContent);
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS,
+				target -> new PlantUmlFileLocation(target, false));
+
+		String resultHtml = renderer.render(document);
+
+		assertNotNull(resultHtml);
+		assertEquals("<span style=\"color:red\">PlantUML file &quot;path/to/missing/file.puml&quot;"
+				+ " does not exist.</span>\n", resultHtml);
+	}
+
+	@Test
 	public void renderErrorMessageForPumlFileThatIsThereButWasNotRead() {
 		String mdFileContent = "![label](path/to/unreadable/file.puml)";
 

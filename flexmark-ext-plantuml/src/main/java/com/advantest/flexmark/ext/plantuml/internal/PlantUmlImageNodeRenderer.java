@@ -62,7 +62,9 @@ public class PlantUmlImageNodeRenderer implements NodeRenderer {
      * <p>Whoever parses a document says what the PlantUML code of a referenced diagram is, so
      * nothing is read here. That side also says where it looked for the file, and a reader is told
      * that place so that the reference can be checked: a file that is not there and one that is
-     * there but cannot be read are two different things to go looking for.</p>
+     * there but cannot be read are two different things to go looking for. Where the place is the
+     * reference itself, because nobody could resolve it any further, it is left out rather than
+     * repeated.</p>
      */
     private void renderMissingPlantUmlCode(String targetUrl, NodeRendererContext context, HtmlWriter htmlWriter) {
         PlantUmlFileLocations fileLocations = PlantUmlExtension.KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS.get(context.getDocument());
@@ -74,6 +76,8 @@ public class PlantUmlImageNodeRenderer implements NodeRenderer {
             message = String.format("No PlantUML code available for \"%s\".", targetUrl);
         } else if (location.exists()) {
             message = String.format("Could not read PlantUML file \"%s\"", targetUrl);
+        } else if (targetUrl.equals(location.resolvedPath())) {
+            message = String.format("PlantUML file \"%s\" does not exist.", targetUrl);
         } else {
             message = String.format("PlantUML file \"%s\" (resolved path: \"%s\") does not exist.",
                     targetUrl, location.resolvedPath());
