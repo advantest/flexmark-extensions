@@ -25,6 +25,7 @@
     <properties>
         <flexmark.version>0.65.2-20260519-1651</flexmark.version>
         <slf4j.version>2.0.18</slf4j.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>1779350678</project.build.outputTimestamp>
         <flexmark.javadoc.location>${project.basedir}/target/apidocs/</flexmark.javadoc.location>
@@ -74,6 +75,36 @@
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Measures how much of the code the tests reach. The measurement runs with every
+                 build and does not judge the result: how the value has to develop is not decided
+                 yet, so nothing fails because of it. Every module writes its own report to
+                 target/site/jacoco/index.html, because every module is a library of its own and
+                 is used without the others.
+
+                 The agent is passed to the tests through the argLine property, which surefire
+                 picks up on its own. A build that sets that property itself therefore runs
+                 without the agent and measures nothing. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-coverage-measurement</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report-coverage</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
