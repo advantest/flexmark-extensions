@@ -8,6 +8,7 @@ package com.advantest.flexmark.ext.plantuml;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -174,5 +175,76 @@ public class PlantUmlCodeBlockTest extends AbstractPlantUmlTest {
 		
 		assertNotNull(resultHtml);
 		assertTrue(resultHtml.matches(expectedRegex));
+	}
+
+	@Test
+	public void startMarkerFollowedByTextIsNoPlantUmlCodeBlock() {
+		final String markdownCode = """
+				@startuml title
+				class ArrayList
+				@enduml
+				""";
+		
+		Document document = parser.parse(markdownCode);
+		String resultHtml = renderer.render(document);
+		
+		assertFalse(resultHtml.contains("<svg"));
+		assertFalse(document.getFirstChild() instanceof PlantUmlBlockNode);
+	}
+	
+	@Test
+	public void endMarkerFollowedByTextIsNoEndOfPlantUmlCodeBlock() {
+		final String markdownCode = """
+				@startuml
+				class ArrayList
+				@enduml title
+				""";
+		
+		Document document = parser.parse(markdownCode);
+		String resultHtml = renderer.render(document);
+		
+		assertFalse(resultHtml.contains("<svg"));
+		assertFalse(document.getFirstChild() instanceof PlantUmlBlockNode);
+	}
+	
+	@Test
+	public void endMarkerOfAnotherDiagramKindIsNoEndOfPlantUmlCodeBlock() {
+		final String markdownCode = """
+				@startuml
+				class ArrayList
+				@endsalt
+				""";
+		
+		Document document = parser.parse(markdownCode);
+		
+		assertFalse(document.getFirstChild() instanceof PlantUmlBlockNode);
+	}
+	
+	@Test
+	public void codeBlockWithoutEndMarkerIsNoPlantUmlCodeBlock() {
+		final String markdownCode = """
+				@startuml
+				class ArrayList
+				""";
+		
+		Document document = parser.parse(markdownCode);
+		
+		assertFalse(document.getFirstChild() instanceof PlantUmlBlockNode);
+	}
+	
+	@Test
+	public void mindmapCodeBlockRendered() {
+		final String markdownCode = """
+				@startmindmap
+				* root
+				** child
+				@endmindmap
+				""";
+		
+		Document document = parser.parse(markdownCode);
+		String resultHtml = renderer.render(document);
+		
+		assertTrue(document.getFirstChild() instanceof PlantUmlBlockNode);
+		assertTrue(resultHtml.contains("<svg"));
 	}
 }
