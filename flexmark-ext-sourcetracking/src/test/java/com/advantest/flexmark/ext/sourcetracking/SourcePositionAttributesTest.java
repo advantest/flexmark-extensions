@@ -66,6 +66,39 @@ public class SourcePositionAttributesTest {
 		assertEquals("<h1>Heading</h1>\n", html);
 	}
 
+	@Test
+	public void sourcePositionAttributesAreRenderedForItemsOfTightList() {
+		String markdown = "- first\n- second\n";
+
+		String html = normalizeWhitespace(render(markdown));
+
+		int firstOffset = markdown.indexOf("- first");
+		assertTrue(html, html.contains("<li " + sourceAttributes(firstOffset, "- first\n".length()) + ">first</li>"));
+		int secondOffset = markdown.indexOf("- second");
+		assertTrue(html, html.contains("<li " + sourceAttributes(secondOffset, "- second\n".length()) + ">second</li>"));
+	}
+
+	@Test
+	public void sourcePositionAttributesAreRenderedForItemsOfLooseList() {
+		String markdown = "- first\n\n- second\n";
+
+		String html = normalizeWhitespace(render(markdown));
+
+		int firstOffset = markdown.indexOf("- first");
+		assertTrue(html, html.contains("<li " + sourceAttributes(firstOffset, "- first\n".length()) + ">"));
+		int secondOffset = markdown.indexOf("- second");
+		assertTrue(html, html.contains("<li " + sourceAttributes(secondOffset, "- second\n".length()) + ">"));
+	}
+
+	@Test
+	public void noSourcePositionAttributesAreRenderedForCodeContentOfFencedBlock() {
+		String markdown = "```\ncode\n```\n";
+
+		String html = normalizeWhitespace(render(markdown));
+
+		assertTrue(html, html.contains("<pre " + sourceAttributes(0, markdown.length() - 1) + "><code>code </code></pre>"));
+	}
+
 	private static String sourceAttributes(int offset, int length) {
 		return SourcePositionAttributesRendererExtension.SOURCE_OFFSET_ATTRIBUTE_NAME
 				+ "=\"" + offset + "\" "
