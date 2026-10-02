@@ -108,6 +108,31 @@ public class ImageFigureRenderingTest {
 	}
 
 	@Test
+	public void imageOnItsOwnIsNotWrappedInAFigureIfLinksAreNotRendered() {
+		MutableDataSet options = options().set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
+
+		String html = render(options, "![Some image](path/to/file.png)");
+
+		assertFalse(html.contains("figure"));
+	}
+
+	@Test
+	public void imageOnItsOwnIsNotWrappedInAFigureIfItsLinkIsSuppressed() {
+		String html = render("![Some image](javascript:alert(1))");
+
+		assertFalse(html.contains("figure"));
+	}
+
+	@Test
+	public void imageInHeadingIsRenderedWithoutAFigureIfLinksAreNotRendered() {
+		MutableDataSet options = options().set(HtmlRenderer.DO_NOT_RENDER_LINKS, true);
+
+		String html = render(options, "# ![Some image](path/to/file.png)");
+
+		assertEquals("<h1></h1>\n", html);
+	}
+
+	@Test
 	public void contentFollowingTheUrlOfAnImageIsAppendedToTheSource() {
 		MutableDataSet options = options();
 		Document document = Parser.builder(options).build().parse("Text ![icon](path/to/icon.png) and more");

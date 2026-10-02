@@ -38,13 +38,13 @@ public class ImageNodeRenderer implements NodeRenderer {
     }
 	
 	private void render(Image node, NodeRendererContext context, HtmlWriter htmlWriter) {
-		if (!(node.getParent() instanceof Paragraph)) {
-			htmlWriter.tagLine("figure").indent();
-		}
-		
 		// ### Code from com.vladsch.flexmark.html.renderer.CoreNodeRenderer#render(Image, NodeRendererContext, HtmlWriter) ###
 		if (context.isDoNotRenderLinks() || isSuppressedLinkPrefix(node.getUrl(), context)) {
 			return;
+		}
+		
+		if (!(node.getParent() instanceof Paragraph)) {
+			htmlWriter.tagLine("figure").indent();
 		}
 		 
 		String altText = new TextCollectingVisitor().collectAndGetText(node);
