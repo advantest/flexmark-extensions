@@ -6,7 +6,7 @@
 
     <groupId>com.advantest.flexmark</groupId>
     <artifactId>flexmark-extensions</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <name>flexmark-extensions</name>
     <description>
         flexmark-java extensions for PlantUML and some Advantest-specific parsing and rendering customizations for FluentMark Advantest Edition.
