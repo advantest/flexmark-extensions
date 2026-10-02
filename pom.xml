@@ -23,7 +23,7 @@
     </modules>
 
     <properties>
-        <flexmark.version>0.65.2-20260519-1651</flexmark.version>
+        <flexmark.version>0.65.3-SNAPSHOT</flexmark.version>
         <slf4j.version>2.0.18</slf4j.version>
         <jacoco.version>0.8.15</jacoco.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
