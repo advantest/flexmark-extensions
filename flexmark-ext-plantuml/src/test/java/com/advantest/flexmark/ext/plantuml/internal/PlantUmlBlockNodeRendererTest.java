@@ -6,9 +6,23 @@
  */
 package com.advantest.flexmark.ext.plantuml.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.junit.Test;
+
+import com.advantest.flexmark.ext.plantuml.PlantUmlBlockNode;
+import com.advantest.flexmark.ext.plantuml.PlantUmlExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 
 public class PlantUmlBlockNodeRendererTest {
 	
@@ -48,5 +62,166 @@ public class PlantUmlBlockNodeRendererTest {
 		
 		assertTrue(plantUmlToHtmlResult1.matches(SVG_EXPECTED_REGEX_PATTERN));
 		assertTrue(plantUmlToHtmlResult2.matches(SVG_EXPECTED_REGEX_PATTERN));
+	}
+
+	@Test
+	public void extractSvgCodeBlockKeepsTextWithoutSvgUnchanged() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.extractSvgCodeBlock("Could not render SVG from PlantUML source code.");
+
+		assertEquals("Could not render SVG from PlantUML source code.", result);
+	}
+
+	@Test
+	public void extractSvgCodeBlockKeepsTextWithoutClosingSvgTagUnchanged() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.extractSvgCodeBlock("<?xml?><svg width=\"1\"><g/>");
+
+		assertEquals("<?xml?><svg width=\"1\"><g/>", result);
+	}
+
+	@Test
+	public void extractSvgCodeBlockKeepsTextWithClosingBeforeOpeningSvgTagUnchanged() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.extractSvgCodeBlock("</svg><svg width=\"1\">");
+
+		assertEquals("</svg><svg width=\"1\">", result);
+	}
+
+	@Test
+	public void adaptingCodeWithoutSvgTagChangesNothing() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding("<div class=\"a\">text</div>");
+
+		assertEquals("<div class=\"a\">text</div>", result);
+	}
+
+	@Test
+	public void adaptingSvgTagRemovesHeightAndPreserveAspectRatio() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding(
+				"<svg width=\"10px\" height=\"5px\" preserveAspectRatio=\"none\" version=\"1.1\"><g/></svg>");
+
+		assertEquals("<svg width=\"10px\" version=\"1.1\"><g/></svg>", result);
+	}
+
+	@Test
+	public void adaptingSvgTagReplacesWidthAndHeightInStyleByMaxWidth() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding(
+				"<svg style=\"width:10px;height:5px;background:#FFFFFF;\"><g/></svg>");
+
+		assertEquals("<svg style=\"background: #FFFFFF; max-width: 100%;\"><g/></svg>", result);
+	}
+
+	@Test
+	public void adaptingSvgTagDropsStyleEntriesWithoutValue() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding("<svg style=\"color:red;oops;\"><g/></svg>");
+
+		assertEquals("<svg style=\"color: red; max-width: 100%;\"><g/></svg>", result);
+	}
+
+	@Test
+	public void adaptingSvgTagWithoutStyleDoesNotAddOne() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding("<svg width=\"10px\"><g/></svg>");
+
+		assertEquals("<svg width=\"10px\"><g/></svg>", result);
+	}
+
+	@Test
+	public void adaptingSvgTagWithEmptyStyleKeepsItEmpty() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding("<svg style=\"\" width=\"10px\"><g/></svg>");
+
+		assertEquals("<svg style=\"\" width=\"10px\"><g/></svg>", result);
+	}
+
+	@Test
+	public void adaptingAdaptsEverySvgTagAndKeepsTheCodeAroundThem() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.adaptSvgAttributesForHtmlEmbedding(
+				"before<svg width=\"1\" height=\"2\"><svg width=\"3\" height=\"4\"></svg></svg>after");
+
+		assertEquals("before<svg width=\"1\"><svg width=\"3\"></svg></svg>after", result);
+	}
+
+	@Test
+	public void translatingMissingSourceCodeYieldsNoSvg() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.translatePlantUmlToSvg(null);
+
+		assertFalse(result.contains("<svg"));
+	}
+
+	@Test
+	public void translatingPlantUmlCodeYieldsSvg() {
+		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
+
+		String result = renderer.translatePlantUmlToSvg(PLANTUML_CODE_BLOCK);
+
+		assertTrue(result.contains("<svg"));
+		assertTrue(result.contains("</svg>"));
+	}
+
+	@Test
+	public void resultThatIsNoXmlIsRenderedAsItWasProduced() {
+		String notXml = "Could not render SVG from PlantUML source code.";
+
+		String html = renderWithResultOfTranslation(notXml);
+
+		assertTrue(html.startsWith("<figure>"));
+		assertTrue(html.contains(notXml));
+	}
+
+	@Test
+	public void svgResultIsRenderedIndented() {
+		String html = renderWithResultOfTranslation("<svg width=\"1\"><g><rect/></g></svg>");
+
+		assertTrue(html.contains("\n    <g>\n      <rect/>\n    </g>\n"));
+	}
+
+	private String renderWithResultOfTranslation(String translationResult) {
+		DataHolder parserOptions = new MutableDataSet()
+				.set(Parser.EXTENSIONS, Collections.singleton(PlantUmlExtension.create()))
+				.toImmutable();
+		DataHolder rendererOptions = new MutableDataSet().set(HtmlRenderer.INDENT_SIZE, 2).toImmutable();
+		Document document = Parser.builder(parserOptions).build().parse(PLANTUML_CODE_BLOCK);
+
+		return HtmlRenderer.builder(rendererOptions)
+				.nodeRendererFactory(options -> new RendererWithFixedTranslation(translationResult))
+				.build().render(document);
+	}
+
+	private static class RendererWithFixedTranslation extends PlantUmlBlockNodeRenderer {
+
+		private final String translationResult;
+
+		RendererWithFixedTranslation(String translationResult) {
+			this.translationResult = translationResult;
+		}
+
+		@Override
+		String translatePlantUmlToSvg(String plantUmlSourceCode) {
+			return translationResult;
+		}
+
+		@Override
+		public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
+			return Set.of(new NodeRenderingHandler<>(PlantUmlBlockNode.class,
+					(node, context, writer) -> renderPlantUmlCode(node.getChars().toString(), writer, context)));
+		}
 	}
 }
