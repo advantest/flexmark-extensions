@@ -48,10 +48,19 @@ public class MathFormulaBlockParser extends AbstractBlockParser {
         // read next line if we didn't see the end marker yet
         BasedSequence line = state.getLine();
         int indexOfStartMarker = line.indexOf("$$");
-        if (indexOfStartMarker >= 0) {
+        if (indexOfStartMarker >= 0 && closesItsLine(line, indexOfStartMarker)) {
             this.blockData.finished = true;
         }
         return BlockContinue.atColumn(state.getColumn());
+    }
+    
+    /**
+     * Tells whether a marker found at the given index is the last thing its line holds. A formula whose end
+     * marker is followed by text would swallow that text, because a block takes whole lines, so such a marker
+     * does not end a formula.
+     */
+    static boolean closesItsLine(BasedSequence line, int indexOfMarker) {
+        return line.subSequence(indexOfMarker + 2).isBlank();
     }
     
     @Override
@@ -137,6 +146,9 @@ public class MathFormulaBlockParser extends AbstractBlockParser {
                 }
                 if (indexOfEndMarkerInLineRemainder > 0) {
                     int indexOfFirstEndMarkerChar = indexOfFirstFormulaSymbol + indexOfEndMarkerInLineRemainder;
+                    if (!closesItsLine(line, indexOfFirstEndMarkerChar)) {
+                        return BlockStart.none();
+                    }
                     blockData.endOffset = line.getStartOffset() + indexOfFirstEndMarkerChar + 2;
                     blockData.endMarker = line.subSequence(indexOfFirstEndMarkerChar, indexOfFirstEndMarkerChar + 2);
                     //blockData.contents = line.subSequence(indexOfFirstFormulaSymbol, indexOfFirstFormulaSymbol + indexOfEndMarkerInLineRemainder);
@@ -151,7 +163,7 @@ public class MathFormulaBlockParser extends AbstractBlockParser {
             BasedSequence[] remainingLines = parentSequence.subSequence(state.getLine().getEndOffset()).splitEOL();
             for (BasedSequence currentLine : remainingLines) {
                 int indexOfEndMarker = currentLine.indexOf("$$");
-                if (indexOfEndMarker >= 0) {
+                if (indexOfEndMarker >= 0 && closesItsLine(currentLine, indexOfEndMarker)) {
                     blockData.endOffset = currentLine.getStartOffset() + indexOfEndMarker + 2;
                     blockData.endMarker = currentLine.subSequence(indexOfEndMarker, indexOfEndMarker + 2);
                     return BlockStart.of(new MathFormulaBlockParser(blockData))

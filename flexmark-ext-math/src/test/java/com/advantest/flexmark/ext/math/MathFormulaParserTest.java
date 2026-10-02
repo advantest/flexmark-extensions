@@ -95,6 +95,26 @@ public class MathFormulaParserTest {
 	}
 
 	@Test
+	public void textAfterTheClosingMarkerOnTheSameLineIsNoDisplayFormula() {
+		assertEquals("<p>$$ x $$ and more</p>\n", render("$$ x $$ and more\n"));
+	}
+
+	@Test
+	public void textAfterTheClosingMarkerOnItsOwnLineIsNoDisplayFormula() {
+		String html = render("$$\nx = 1\n$$ and more\n");
+
+		assertFalse(html.contains("math display"));
+		assertTrue(html.contains("and more"));
+	}
+
+	@Test
+	public void closingMarkerFollowedOnlyBySpaceEndsADisplayFormula() {
+		String html = render("$$\nx = 1\n$$  \n");
+
+		assertTrue(html.contains("<span class=\"math display\">\\[\nx = 1\n\\]</span>"));
+	}
+
+	@Test
 	public void blockParserRequiresBlockData() {
 		assertThrows(IllegalArgumentException.class, () -> new MathFormulaBlockParser(null));
 	}
