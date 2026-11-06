@@ -15,6 +15,7 @@
     <url>https://github.com/advantest/flexmark-extensions</url>
 
     <modules>
+        <module>flexmark-extensions-info</module>
         <module>flexmark-ext-plantuml</module>
         <module>flexmark-ext-math</module>
         <module>flexmark-ext-figures</module>
@@ -522,6 +523,12 @@
             <dependency>
                 <groupId>com.advantest.flexmark</groupId>
                 <artifactId>flexmark-ext-jira-ticket-links</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.advantest.flexmark</groupId>
+                <artifactId>flexmark-extensions-info</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
