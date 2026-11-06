@@ -12,6 +12,10 @@
     <description>flexmark-java extension for rendering images to HTML within figure tags and with figcaption tags.</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.advantest.flexmark</groupId>
+            <artifactId>flexmark-extensions-info</artifactId>
+        </dependency>
 	
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
