@@ -40,6 +40,22 @@
 
     <build>
 
+        <!-- Every module writes its version into a resource of its own,
+             META-INF/<groupId>/<artifactId>/version.properties, filled in from the template in
+             src/version of this repository. Being named after the artifact, the resources of
+             several libraries do not hide each other on a class path, and the IDE fills them in
+             as well, so the version can be read from class folders. -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../src/version</directory>
+                <filtering>true</filtering>
+                <targetPath>META-INF/${project.groupId}/${project.artifactId}</targetPath>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
