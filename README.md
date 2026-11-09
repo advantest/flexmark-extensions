@@ -25,3 +25,7 @@ Extensions
 * flexmark-ext-sourcetracking
 	* Extension adding the Markdown source code position (attributes `source-offset` and `source-length`) to the rendered HTML elements.
 	  Enables navigation from Markdown source code to the corresponding element in an HTML preview and vice versa.
+
+## Licence
+
+The extensions are available under the [BSD 3-Clause License](LICENSE) (`BSD-3-Clause`).
