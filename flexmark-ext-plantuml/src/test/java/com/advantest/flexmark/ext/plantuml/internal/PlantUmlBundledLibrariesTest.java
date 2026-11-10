@@ -11,9 +11,16 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.junit.Test;
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -22,9 +29,9 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 import net.sourceforge.plantuml.SourceStringReader;
 
 /**
- * PlantUML's EPL edition brings ELK, JLaTeXMath and Guava inside its own JAR, and the build excludes the
- * dependencies its POM declares for them. These tests fail if PlantUML stops bundling one of them, so that it
- * would be missing, or if a second copy of one of them reaches the classpath.
+ * PlantUML's EPL edition brings ELK, EMF, JLaTeXMath and Guava inside its own JAR, and Maven resolves them a
+ * second time from the dependencies PlantUML's POM declares, so that licence reports and SBOMs list them. These
+ * tests fail if PlantUML stops bundling one of them, or if Maven resolves a version other than the bundled one.
  */
 public class PlantUmlBundledLibrariesTest {
 
@@ -67,16 +74,48 @@ public class PlantUmlBundledLibrariesTest {
 	}
 
 	@Test
-	public void eachBundledLibraryIsOnTheClasspathOnlyOnceAndComesFromPlantUml() throws IOException {
+	public void plantUmlStillBundlesEachLibrary() throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		URL plantUmlJar = SourceStringReader.class.getProtectionDomain().getCodeSource().getLocation();
+		String plantUmlJar = "jar:" + SourceStringReader.class.getProtectionDomain().getCodeSource().getLocation() + "!/";
 
 		for (String className : CLASSES_OF_BUNDLED_LIBRARIES) {
 			List<URL> copies = Collections.list(classLoader.getResources(className));
 
-			assertEquals(className + " found in " + copies, 1, copies.size());
-			assertTrue(className + " found in " + copies.get(0),
-					copies.get(0).toString().startsWith("jar:" + plantUmlJar + "!/"));
+			assertTrue(className + " found in " + copies,
+					copies.stream().anyMatch(copy -> copy.toString().startsWith(plantUmlJar)));
 		}
+	}
+
+	@Test
+	public void eachBundledLibraryResolvesInTheVersionPlantUmlBundles() throws IOException, URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URL plantUmlJarLocation = SourceStringReader.class.getProtectionDomain().getCodeSource().getLocation();
+		String plantUmlJarUrl = "jar:" + plantUmlJarLocation + "!/";
+		List<String> bundled = new ArrayList<>();
+
+		try (JarFile jar = new JarFile(Path.of(plantUmlJarLocation.toURI()).toFile())) {
+			jar.stream().map(JarEntry::getName)
+					.filter(name -> name.startsWith("META-INF/maven/") && name.endsWith("/pom.properties"))
+					.forEach(bundled::add);
+		}
+		assertFalse(bundled.isEmpty());
+
+		for (String pomProperties : bundled) {
+			List<URL> copies = Collections.list(classLoader.getResources(pomProperties));
+			List<URL> resolved = copies.stream().filter(copy -> !copy.toString().startsWith(plantUmlJarUrl)).toList();
+			URL inPlantUml = copies.stream().filter(copy -> copy.toString().startsWith(plantUmlJarUrl)).findFirst()
+					.orElseThrow();
+
+			assertEquals(pomProperties + " found in " + copies, 1, resolved.size());
+			assertEquals(pomProperties, versionIn(inPlantUml), versionIn(resolved.get(0)));
+		}
+	}
+
+	private static String versionIn(URL pomProperties) throws IOException {
+		Properties properties = new Properties();
+		try (InputStream in = pomProperties.openStream()) {
+			properties.load(in);
+		}
+		return properties.getProperty("version");
 	}
 }

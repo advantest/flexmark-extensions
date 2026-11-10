@@ -13,6 +13,7 @@
 
     <properties>
         <plantuml-version>1.2026.3</plantuml-version>
+        <plantuml-guava-version>33.6.0-jre</plantuml-guava-version>
     </properties>
     
     <dependencyManagement>
@@ -51,16 +52,17 @@
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml-epl</artifactId>
-            <exclusions>
-                <!--
-                  The JAR bundles ELK, EMF and JLaTeXMath with its fonts, yet its POM declares ELK and
-                  JLaTeXMath as runtime dependencies, which would put a second copy beside it.
-                -->
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <!--
+              PlantUML's JAR bundles Guava, which reaches Maven only through ELK's version range
+              [15.0,). Pinning the bundled version keeps that range from resolving to another Guava.
+              Raise it together with plantuml-version.
+            -->
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${plantuml-guava-version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
