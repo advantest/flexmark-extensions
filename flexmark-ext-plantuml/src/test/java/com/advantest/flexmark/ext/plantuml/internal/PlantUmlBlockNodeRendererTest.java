@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.advantest.flexmark.ext.plantuml.PlantUmlBlockNode;
 import com.advantest.flexmark.ext.plantuml.PlantUmlExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;
@@ -191,7 +192,27 @@ public class PlantUmlBlockNodeRendererTest {
 		assertTrue(html.contains("\n    <g>\n      <rect/>\n    </g>\n"));
 	}
 
+	@Test
+	public void captionIsEscaped() {
+		String html = renderWithResultOfTranslation("<svg width=\"1\"></svg>", "Tom's \"cat\" & a < b > c");
+
+		assertTrue(html.contains("<figcaption>Tom&#39;s &quot;cat&quot; &amp; a &lt; b &gt; c</figcaption>"));
+	}
+
+	@Test
+	public void errorMessageIsEscaped() {
+		HtmlWriter writer = new HtmlWriter(0, 0);
+
+		new PlantUmlBlockNodeRenderer().renderErrorMessage("Tom's \"cat\" & a < b > c", null, writer);
+
+		assertTrue(writer.toString(0, 0).contains(">Tom&#39;s &quot;cat&quot; &amp; a &lt; b &gt; c</span>"));
+	}
+
 	private String renderWithResultOfTranslation(String translationResult) {
+		return renderWithResultOfTranslation(translationResult, null);
+	}
+
+	private String renderWithResultOfTranslation(String translationResult, String caption) {
 		DataHolder parserOptions = new MutableDataSet()
 				.set(Parser.EXTENSIONS, Collections.singleton(PlantUmlExtension.create()))
 				.toImmutable();
@@ -199,16 +220,18 @@ public class PlantUmlBlockNodeRendererTest {
 		Document document = Parser.builder(parserOptions).build().parse(PLANTUML_CODE_BLOCK);
 
 		return HtmlRenderer.builder(rendererOptions)
-				.nodeRendererFactory(options -> new RendererWithFixedTranslation(translationResult))
+				.nodeRendererFactory(options -> new RendererWithFixedTranslation(translationResult, caption))
 				.build().render(document);
 	}
 
 	private static class RendererWithFixedTranslation extends PlantUmlBlockNodeRenderer {
 
 		private final String translationResult;
+		private final String caption;
 
-		RendererWithFixedTranslation(String translationResult) {
+		RendererWithFixedTranslation(String translationResult, String caption) {
 			this.translationResult = translationResult;
+			this.caption = caption;
 		}
 
 		@Override
@@ -219,7 +242,7 @@ public class PlantUmlBlockNodeRendererTest {
 		@Override
 		public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
 			return Set.of(new NodeRenderingHandler<>(PlantUmlBlockNode.class,
-					(node, context, writer) -> renderPlantUmlCode(node.getChars().toString(), writer, context)));
+					(node, context, writer) -> renderPlantUmlCode(node.getChars().toString(), caption, writer, context)));
 		}
 	}
 }

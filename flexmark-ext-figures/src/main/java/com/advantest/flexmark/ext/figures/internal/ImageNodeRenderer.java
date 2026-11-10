@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.html.HtmlEscapers;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.html.HtmlWriter;
@@ -69,7 +68,8 @@ public class ImageNodeRenderer implements NodeRenderer {
         
         if (!(node.getParent() instanceof Paragraph)) {
 	        if (altText != null && !altText.isBlank()) {
-	            String escapedCaption = HtmlEscapers.htmlEscaper().escape(altText);
+	            // escapes ' as well, as Guava's HtmlEscapers did before, so that the HTML stays the same
+	            String escapedCaption = Escaping.escapeHtml(altText, false).replace("'", "&#39;");
 	            htmlWriter.line().tag("figcaption").append(escapedCaption).tag("/figcaption").line();
 	        }
 	        

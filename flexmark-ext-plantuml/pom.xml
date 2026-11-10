@@ -13,14 +13,19 @@
 
     <properties>
         <plantuml-version>1.2026.3</plantuml-version>
+        <plantuml-guava-version>33.6.0-jre</plantuml-guava-version>
     </properties>
     
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- consumers can override the default PlantUML version -->
+                <!--
+                  PlantUML's EPL edition, not its GPL edition (net.sourceforge.plantuml:plantuml), which
+                  is incompatible with the BSD 3-Clause License. Consumers may override the version, but
+                  only of plantuml-epl; naming the GPL edition as well puts both into a distribution.
+                -->
                 <groupId>net.sourceforge.plantuml</groupId>
-                <artifactId>plantuml</artifactId>
+                <artifactId>plantuml-epl</artifactId>
                 <version>${plantuml-version}</version>
             </dependency>
         </dependencies>
@@ -46,12 +51,18 @@
             </dependency>
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml</artifactId>
+            <artifactId>plantuml-epl</artifactId>
         </dependency>
         <dependency>
+            <!--
+              PlantUML's JAR bundles Guava, which reaches Maven only through ELK's version range
+              [15.0,). Pinning the bundled version keeps that range from resolving to another Guava.
+              Raise it together with plantuml-version.
+            -->
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.2.0-jre</version>
+            <version>${plantuml-guava-version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
