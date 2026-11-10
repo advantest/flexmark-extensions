@@ -57,6 +57,13 @@ public class ImageFigureRenderingTest {
 	}
 
 	@Test
+	public void quotesAndAngleBracketsInDescriptionAreEscapedInCaption() {
+		String html = render("![Tom's \"cat\" a < b > c](path/to/file.png)");
+
+		assertTrue(html.contains("<figcaption>Tom&#39;s &quot;cat&quot; a &lt; b &gt; c</figcaption>"));
+	}
+
+	@Test
 	public void imageInHeadingIsRenderedAsFigure() {
 		String html = render("# ![Some image](path/to/file.png)");
 
