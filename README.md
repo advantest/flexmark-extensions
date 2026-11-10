@@ -47,8 +47,10 @@ too. The EPL's copyleft covers PlantUML's own files only, so the extensions keep
 What follows for an application embedding the extension:
 
 * Do not add the GPL edition. To use another PlantUML version, override the version of `plantuml-epl`.
-* The PlantUML JAR bundles ELK, EMF, JLaTeXMath and Guava. The extension therefore excludes PlantUML's transitive
-  dependencies, and the extensions bring no Guava of their own.
+* The PlantUML JAR bundles ELK, EMF, JLaTeXMath and Guava. Maven resolves them a second time from PlantUML's POM, so
+  that licence reports and SBOMs list them; a distribution needs only the copies inside the PlantUML JAR. The extension
+  pins Guava to the version PlantUML bundles, so override both versions together. The extensions bring no Guava of
+  their own.
 * The EPL edition renders no Ditaa, JCCKit or Sudoku diagrams and writes no WebP images.
 
 ## Licence
