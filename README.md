@@ -26,6 +26,21 @@ Extensions
 	* Extension adding the Markdown source code position (attributes `source-offset` and `source-length`) to the rendered HTML elements.
 	  Enables navigation from Markdown source code to the corresponding element in an HTML preview and vice versa.
 
+## PlantUML edition
+
+flexmark-ext-plantuml renders diagrams with PlantUML's EPL edition, `net.sourceforge.plantuml:plantuml-epl`, published
+under the Eclipse Public License. PlantUML's GPL edition, `net.sourceforge.plantuml:plantuml`, is not an option: the
+GPL is incompatible with the BSD 3-Clause License and would put its terms on everything distributed together with it.
+The EPL fits as well because ELK, the Eclipse Layout Kernel that PlantUML can lay out diagrams with, is under the EPL
+too. The EPL's copyleft covers PlantUML's own files only, so the extensions keep their licence.
+
+What follows for an application embedding the extension:
+
+* Do not add the GPL edition. To use another PlantUML version, override the version of `plantuml-epl`.
+* The PlantUML JAR bundles ELK, EMF, JLaTeXMath and Guava. The extension therefore excludes PlantUML's transitive
+  dependencies and uses the Guava version that PlantUML bundles.
+* The EPL edition renders no Ditaa, JCCKit or Sudoku diagrams and writes no WebP images.
+
 ## Licence
 
 The extensions are available under the [BSD 3-Clause License](LICENSE) (`BSD-3-Clause`).
