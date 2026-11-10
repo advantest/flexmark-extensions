@@ -54,3 +54,8 @@ What follows for an application embedding the extension:
 ## Licence
 
 The extensions are available under the [BSD 3-Clause License](LICENSE) (`BSD-3-Clause`).
+
+## Copyright
+
+Copyright (c) 2022-2026, Advantest Europe GmbH.
+All rights reserved.
