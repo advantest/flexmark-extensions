@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.advantest.flexmark.ext.plantuml.PlantUmlBlockNode;
-import com.google.common.html.HtmlEscapers;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
@@ -43,6 +42,7 @@ import com.vladsch.flexmark.html.renderer.NodeRendererContext;
 import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
 import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.sequence.Escaping;
 import com.vladsch.flexmark.util.sequence.SequenceUtils;
 
 import net.sourceforge.plantuml.FileFormat;
@@ -84,7 +84,7 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
         String htmlFormatted = formatHtml(plantUmlToHtmlResult, context);
         htmlWriter.noTrimLeading().append(htmlFormatted);
         if (caption != null && !caption.isBlank()) {
-            String escapedCaption = HtmlEscapers.htmlEscaper().escape(caption);
+            String escapedCaption = escapeHtml(caption);
             htmlWriter.line().tag("figcaption").append(escapedCaption).tag("/figcaption").line();
         }
         htmlWriter.unIndent().tagLine("/figure");
@@ -92,9 +92,14 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
 
     void renderErrorMessage(String originalMessage, NodeRendererContext context, HtmlWriter htmlWriter) {
         htmlWriter.withAttr().attr("style", "color:red").tag("span");
-        String escapedMessage = HtmlEscapers.htmlEscaper().escape(originalMessage);
+        String escapedMessage = escapeHtml(originalMessage);
         htmlWriter.append(escapedMessage);
         htmlWriter.tag("/span").line();
+    }
+
+    // escapes ' as well, as Guava's HtmlEscapers did before, so that the HTML stays the same
+    private static String escapeHtml(String text) {
+        return Escaping.escapeHtml(text, false).replace("'", "&#39;");
     }
     
     String extractSvgCodeBlock(String plantumlToSvgRenderingResult) {

@@ -38,7 +38,7 @@ What follows for an application embedding the extension:
 
 * Do not add the GPL edition. To use another PlantUML version, override the version of `plantuml-epl`.
 * The PlantUML JAR bundles ELK, EMF, JLaTeXMath and Guava. The extension therefore excludes PlantUML's transitive
-  dependencies and uses the Guava version that PlantUML bundles.
+  dependencies, and the extensions bring no Guava of their own.
 * The EPL edition renders no Ditaa, JCCKit or Sudoku diagrams and writes no WebP images.
 
 ## Licence
