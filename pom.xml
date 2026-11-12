@@ -613,14 +613,6 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <name>Dietrich Travkin</name>
-            <organization>Advantest Europe GmbH</organization>
-            <organizationUrl>https://github.com/advantest/</organizationUrl>
-        </developer>
-    </developers>
-
     <scm>
         <connection>scm:git:git@github.com:advantest/flexmark-extensions.git</connection>
         <developerConnection>scm:git:git@github.com:advantest/flexmark-extensions.git</developerConnection>
