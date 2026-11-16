@@ -201,6 +201,43 @@
             <id>deploy-advantest</id>
             <build>
                 <plugins>
+                    <!-- Only a committed dated release depending on no snapshot is deployed to Artifactory (D-51). -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy-advantest-dated-release</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireProperty>
+                                            <property>project.version</property>
+                                            <regex>[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}-[0-9]{4}</regex>
+                                            <regexMessage>Only a dated release x.y.z-yyyyMMdd-HHmm is deployed to Artifactory, not ${project.version}.</regexMessage>
+                                        </requireProperty>
+                                        <!-- git status lists untracked files as well and looks at the working tree of this project, a linked worktree too. -->
+                                        <evaluateBeanshell>
+                                            <condition><![CDATA[
+                                                process = new ProcessBuilder(new String[] {"git", "status", "--porcelain"})
+                                                        .directory(new File(new java.net.URI("${project.baseUri}")))
+                                                        .redirectErrorStream(true)
+                                                        .start();
+                                                output = new String(process.getInputStream().readAllBytes());
+                                                process.waitFor() == 0 && output.isEmpty()
+                                            ]]></condition>
+                                            <message>The working tree has uncommitted changes, or git status failed. Only what is committed is deployed to Artifactory.</message>
+                                        </evaluateBeanshell>
+                                        <requireReleaseDeps>
+                                            <message>A dated release deployed to Artifactory depends on no -SNAPSHOT version and has no -SNAPSHOT parent.</message>
+                                        </requireReleaseDeps>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.jfrog.buildinfo</groupId>
                         <artifactId>artifactory-maven-plugin</artifactId>
