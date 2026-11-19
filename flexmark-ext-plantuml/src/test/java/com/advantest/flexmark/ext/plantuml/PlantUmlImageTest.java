@@ -89,6 +89,26 @@ public class PlantUmlImageTest extends AbstractPlantUmlTest {
 	}
 
 	@Test
+	public void referencedPumlFileIsRenderedDarkWhenTheDocumentSaysSo() {
+		Document document = parser.parse("![diagram](diagrams/classes.puml)");
+		document.set(PlantUmlExtension.KEY_DOCUMENT_PATH_TO_FILE_CONTENTS_MAP,
+				Map.of("diagrams/classes.puml", PUML_CODE));
+		document.set(PlantUmlExtension.KEY_DARK_MODE, true);
+
+		String resultHtml = renderer.render(document);
+
+		assertTrue(resultHtml.contains("background: #1B1B1B;"));
+		assertFalse(resultHtml.contains("background: #FFFFFF;"));
+	}
+
+	@Test
+	public void referencedPumlFileIsRenderedLightByDefault() {
+		String resultHtml = renderWithDiagram("![diagram](diagrams/classes.puml)");
+
+		assertTrue(resultHtml.contains("background: #FFFFFF;"));
+	}
+
+	@Test
 	public void imageWithoutLabelIsRenderedWithoutCaption() {
 		String resultHtml = renderWithDiagram("![](diagrams/classes.puml)");
 
