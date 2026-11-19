@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import net.sourceforge.plantuml.error.PSystemError;
+
 public class PlantUmlExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension {
 
     public static final NullableDataKey<Map<String,String>> KEY_DOCUMENT_PATH_TO_FILE_CONTENTS_MAP = new NullableDataKey<>("RELATIVE_PATH_TO_FILE_CONTENTS_MAP");
@@ -36,6 +38,17 @@ public class PlantUmlExtension implements Parser.ParserExtension, HtmlRenderer.H
 
     public static PlantUmlExtension create() {
         return new PlantUmlExtension();
+    }
+
+    /**
+     * Switches off the decorations PlantUML adds to its error diagrams depending on the time, such as requests for
+     * donations that change from minute to minute. The same diagram then renders the same way every time; the error
+     * message itself stays. The extension's renderers call this before they draw a diagram, so users of the extension
+     * need not; code that runs PlantUML itself should. It only sets a flag of PlantUML's, so any thread may call it any
+     * number of times.
+     */
+    public static void disableTimeBasedErrorDecorations() {
+        PSystemError.disableTimeBasedErrorDecorations();
     }
 
     @Override

@@ -53,6 +53,15 @@ What follows for an application embedding the extension:
   their own.
 * The EPL edition renders no Ditaa, JCCKit or Sudoku diagrams and writes no WebP images.
 
+## Error diagrams
+
+Where a diagram has an error, PlantUML draws an error diagram with the error message. Depending on the minute it is
+drawn in, PlantUML adds decorations to it, such as requests for donations. flexmark-ext-plantuml switches these
+time-based decorations off before it draws a diagram, because the same diagram must render the same way every time:
+tests and comparisons of rendered documents rely on it, and a preview should not change while nobody edits the
+document. The error message itself is kept. Code that runs PlantUML itself, besides the extension, can switch them off
+by calling `PlantUmlExtension.disableTimeBasedErrorDecorations()`.
+
 ## Licence
 
 The extensions are available under the [BSD 3-Clause License](LICENSE) (`BSD-3-Clause`).
