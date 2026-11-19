@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.advantest.flexmark.ext.plantuml.PlantUmlBlockNode;
+import com.advantest.flexmark.ext.plantuml.PlantUmlExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
@@ -209,6 +210,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
     }
 
     String translatePlantUmlToSvg(String plantUmlSourceCode) {
+        // Called in the rendering thread, so that the thread surely sees PlantUML's flag set.
+        PlantUmlExtension.disableTimeBasedErrorDecorations();
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             SourceStringReader reader = new SourceStringReader(plantUmlSourceCode);
             reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
