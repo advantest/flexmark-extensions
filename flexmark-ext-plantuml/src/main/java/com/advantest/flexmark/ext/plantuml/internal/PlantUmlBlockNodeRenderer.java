@@ -51,6 +51,7 @@ import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.SourceFileReader;
 import net.sourceforge.plantuml.SourceStringReader;
+import net.sourceforge.plantuml.klimt.color.ColorMapper;
 import net.sourceforge.plantuml.preproc.Defines;
 
 public class PlantUmlBlockNodeRenderer implements NodeRenderer {
@@ -79,7 +80,8 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
 
     public void renderPlantUmlCode(String plantUmlSourceCode, String caption, HtmlWriter htmlWriter, NodeRendererContext context) {
         htmlWriter.withAttr().tagLine("figure").indent();
-        String plantUmlToSvgResult = translatePlantUmlToSvg(plantUmlSourceCode);
+        boolean darkMode = PlantUmlExtension.KEY_DARK_MODE.get(context.getDocument());
+        String plantUmlToSvgResult = translatePlantUmlToSvg(plantUmlSourceCode, darkMode);
         String svgCodeBlock = extractSvgCodeBlock(plantUmlToSvgResult);
         String plantUmlToHtmlResult = adaptSvgAttributesForHtmlEmbedding(svgCodeBlock);
         String htmlFormatted = formatHtml(plantUmlToHtmlResult, context);
@@ -209,18 +211,23 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
     	return String.join(SequenceUtils.EOL, linesArray);
     }
 
-    String translatePlantUmlToSvg(String plantUmlSourceCode) {
+    String translatePlantUmlToSvg(String plantUmlSourceCode, boolean darkMode) {
         // Called in the rendering thread, so that the thread surely sees PlantUML's flag set.
         PlantUmlExtension.disableTimeBasedErrorDecorations();
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             SourceStringReader reader = new SourceStringReader(plantUmlSourceCode);
-            reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
+            reader.outputImage(os, fileFormatOption(darkMode));
             return new String(os.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             LOG.debug("A PlantUML diagram cannot be rendered, so the message saying so is rendered"
                     + " in its place.", e);
             return "Could not render SVG from PlantUML source code.";
         }
+    }
+
+    static FileFormatOption fileFormatOption(boolean darkMode) {
+        FileFormatOption option = new FileFormatOption(FileFormat.SVG);
+        return darkMode ? option.withColorMapper(ColorMapper.DARK_MODE) : option;
     }
 
     private String formatHtml(String sourceHtmlCode, NodeRendererContext context) {
@@ -250,13 +257,13 @@ public class PlantUmlBlockNodeRenderer implements NodeRenderer {
         }
     }
 
-    private String translatePlantUmlToHtml(File plantUmlSourceFile) {
+    private String translatePlantUmlToHtml(File plantUmlSourceFile, boolean darkMode) {
         SourceFileReader reader;
         try {
             File tmpFile = File.createTempFile(plantUmlSourceFile.getName(), "-svg");
             File targetDir = tmpFile.getParentFile();
             reader = new SourceFileReader(true, Defines.createWithFileName(plantUmlSourceFile),
-                    plantUmlSourceFile, targetDir, Collections.<String>emptyList(), "UTF-8", new FileFormatOption(FileFormat.SVG));
+                    plantUmlSourceFile, targetDir, Collections.<String>emptyList(), "UTF-8", fileFormatOption(darkMode));
             //reader.setCheckMetadata(true);
             List<GeneratedImage> list = reader.getGeneratedImages();
 

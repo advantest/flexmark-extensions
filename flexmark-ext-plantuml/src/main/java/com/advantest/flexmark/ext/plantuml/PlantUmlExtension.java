@@ -12,6 +12,7 @@ import com.advantest.flexmark.ext.plantuml.internal.PlantUmlFencedCodeBlockRende
 import com.advantest.flexmark.ext.plantuml.internal.PlantUmlImageNodeRenderer;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.data.DataKey;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.NullableDataKey;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,13 @@ public class PlantUmlExtension implements Parser.ParserExtension, HtmlRenderer.H
     public static final NullableDataKey<PlantUmlFileLocations> KEY_DOCUMENT_PLANTUML_FILE_LOCATIONS = new NullableDataKey<>("PLANTUML_FILE_LOCATIONS");
 
     public static final NullableDataKey<Boolean> KEY_RENDER_FENCED_PLANTUML_CODE_BLOCKS = new NullableDataKey<Boolean>("RENDER_FENCED_PLANUML_CODE_BLOCKS", false);
+
+    /**
+     * Whether diagrams are rendered for a dark background, using PlantUML's own dark mode. The
+     * PlantUML code is left as it is. It is read from the document when a diagram is rendered, so
+     * it can be set as an option or on a single document, which then overrides the options.
+     */
+    public static final DataKey<Boolean> KEY_DARK_MODE = new DataKey<>("DARK_MODE", false);
 
     private PlantUmlExtension() {
     }

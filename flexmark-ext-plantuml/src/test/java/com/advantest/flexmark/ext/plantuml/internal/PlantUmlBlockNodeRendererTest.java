@@ -46,7 +46,7 @@ public class PlantUmlBlockNodeRendererTest {
 	public void renderSvgAndAdaptToHtmlIncludesSvgPartOnly() {
 		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
 		
-		String plantUmlToSvgResult = renderer.translatePlantUmlToSvg(PLANTUML_CODE_BLOCK);
+		String plantUmlToSvgResult = renderer.translatePlantUmlToSvg(PLANTUML_CODE_BLOCK, false);
 		String plantUmlToHtmlResult = renderer.extractSvgCodeBlock(plantUmlToSvgResult);
 		
 		assertTrue(plantUmlToHtmlResult.matches(SVG_EXPECTED_REGEX_PATTERN));
@@ -160,7 +160,7 @@ public class PlantUmlBlockNodeRendererTest {
 	public void translatingMissingSourceCodeYieldsNoSvg() {
 		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
 
-		String result = renderer.translatePlantUmlToSvg(null);
+		String result = renderer.translatePlantUmlToSvg(null, false);
 
 		assertFalse(result.contains("<svg"));
 	}
@@ -169,7 +169,7 @@ public class PlantUmlBlockNodeRendererTest {
 	public void translatingPlantUmlCodeYieldsSvg() {
 		PlantUmlBlockNodeRenderer renderer = new PlantUmlBlockNodeRenderer();
 
-		String result = renderer.translatePlantUmlToSvg(PLANTUML_CODE_BLOCK);
+		String result = renderer.translatePlantUmlToSvg(PLANTUML_CODE_BLOCK, false);
 
 		assertTrue(result.contains("<svg"));
 		assertTrue(result.contains("</svg>"));
@@ -235,7 +235,7 @@ public class PlantUmlBlockNodeRendererTest {
 		}
 
 		@Override
-		String translatePlantUmlToSvg(String plantUmlSourceCode) {
+		String translatePlantUmlToSvg(String plantUmlSourceCode, boolean darkMode) {
 			return translationResult;
 		}
 

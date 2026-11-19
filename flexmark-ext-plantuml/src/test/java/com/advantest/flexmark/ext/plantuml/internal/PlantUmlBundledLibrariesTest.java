@@ -55,7 +55,7 @@ public class PlantUmlBundledLibrariesTest {
 				class Dog
 				Cat --> Dog
 				@enduml
-				""");
+				""", false);
 
 		assertTrue(svg, svg.startsWith("<svg"));
 		assertTrue(svg, svg.contains("Cat"));
