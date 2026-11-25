@@ -101,11 +101,12 @@
                  build and does not judge the result: how the value has to develop is not decided
                  yet, so nothing fails because of it. Every module writes its own report to
                  target/site/jacoco/index.html, because every module is a library of its own and
-                 is used without the others.
+                 is used without the others. The report is written in the verify phase, after the
+                 integration tests, so that it counts them as well as the unit tests.
 
                  The agent is passed to the tests through the argLine property, which surefire
-                 picks up on its own. A build that sets that property itself therefore runs
-                 without the agent and measures nothing. -->
+                 and failsafe pick up on their own. A build that sets that property itself
+                 therefore runs without the agent and measures nothing. -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -119,7 +120,7 @@
                     </execution>
                     <execution>
                         <id>report-coverage</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
