@@ -35,4 +35,14 @@ public class FlexmarkExtensionsInfoTest {
     public void answersNoVersionWhereTheResourceWasNotFilledIn() {
         assertNull(FlexmarkExtensionsInfo.readVersion("com/advantest/flexmark/unfiltered-version.properties"));
     }
+
+    @Test
+    public void answersNoVersionWhereTheResourceNamesABlankOne() {
+        assertNull(FlexmarkExtensionsInfo.readVersion("com/advantest/flexmark/blank-version.properties"));
+    }
+
+    @Test
+    public void answersNoVersionWhereTheResourceCannotBeRead() {
+        assertNull(FlexmarkExtensionsInfo.readVersion("com/advantest/flexmark/malformed-version.properties"));
+    }
 }
